@@ -27,34 +27,73 @@ app.get("/webhook", (req, res) => {
   return res.sendStatus(403);
 });
 
-app.post("/webhook", (req, res) => {
-  try {
-    console.log("🔥 FULL BODY:");
-    console.log(JSON.stringify(req.body, null, 2));
-  
-    const body = req.body;
-  
-    body.entry?.forEach(entry => {
-      entry.changes?.forEach(change => {
-        console.log("👉 CHANGE FIELD:", change.field);
-        console.log("👉 VALUE:", JSON.stringify(change.value, null, 2));
-      });
-    });
-  
-    const savedMessage = await Message.create({
-      from: msg.from,
-      text: msg.text?.body,
-      time: new Date()
-    });
-  
-    res.sendStatus(200);
-  } catch (err) {
-    console.error("❌ ERROR:", err.response?.data || err.message);
+app.post("/webhook", async (req, res) => {
+  const body = req.body;
 
-    return res.status(500).json({
-      success: false,
-      error: err.response?.data || err.message
-    });
-  }  
+  for (const entry of body.entry || []) {
+    for (const change of entry.changes || []) {
+      const value = change.value;
+
+      // 📩 Incoming messages
+      if (value.messages) {
+        for (const msg of value.messages) {
+          await Message.create({
+            from: msg.from,
+            text: msg.text?.body,
+            timestamp: new Date()
+          });
+
+          console.log("💾 Message saved:", msg.text?.body);
+        }
+      }
+
+      // 📦 Status updates
+      if (value.statuses) {
+        for (const status of value.statuses) {
+          await Message.create({
+            from: status.recipient_id,
+            status: status.status,
+            timestamp: new Date()
+          });
+
+          console.log("📦 Status saved:", status.status);
+        }
+      }
+    }
+  }
+
+  res.sendStatus(200);
 });
+
+// app.post("/webhook", (req, res) => {
+//   try {
+//     console.log("🔥 FULL BODY:");
+//     console.log(JSON.stringify(req.body, null, 2));
+  
+//     const body = req.body;
+  
+//     body.entry?.forEach(entry => {
+//       entry.changes?.forEach(change => {
+//         console.log("👉 CHANGE FIELD:", change.field);
+//         console.log("👉 VALUE:", JSON.stringify(change.value, null, 2));
+//       });
+//     });
+  
+//     const savedMessage = await Message.create({
+//       from: msg.from,
+//       text: msg.text?.body,
+//       time: new Date()
+//     });
+  
+//     res.sendStatus(200);
+//   } catch (err) {
+//     console.error("❌ ERROR:", err.response?.data || err.message);
+
+//     return res.status(500).json({
+//       success: false,
+//       error: err.response?.data || err.message
+//     });
+//   }  
+// });
+
 app.listen(process.env.PORT || 5000);
