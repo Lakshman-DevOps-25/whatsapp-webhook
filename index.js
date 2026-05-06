@@ -1,4 +1,15 @@
 import express from "express";
+import mongoose from "mongoose";
+
+mongoose.connect("mongodb+srv://lakshmana-gundala:Mongodb123@cluster0.mpkvh0j.mongodb.net/admin");
+
+const MessageSchema = new mongoose.Schema({
+  from: String,
+  text: String,
+  time: Date
+});
+
+const Message = mongoose.model("Message", MessageSchema);
 
 const app = express();
 app.use(express.json());
@@ -27,6 +38,12 @@ app.post("/webhook", (req, res) => {
       console.log("👉 CHANGE FIELD:", change.field);
       console.log("👉 VALUE:", JSON.stringify(change.value, null, 2));
     });
+  });
+
+  await Message.create({
+    from: msg.from,
+    text: msg.text?.body,
+    time: new Date()
   });
 
   res.sendStatus(200);
