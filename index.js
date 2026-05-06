@@ -17,13 +17,10 @@ app.get("/webhook", (req, res) => {
 });
 
 app.post("/webhook", (req, res) => {
-  console.log("Webhook:", req.body);
-
-  console.log("FULL QUERY:", req.query);
+  console.log("🔥 FULL WEBHOOK DATA:");
+  console.log(JSON.stringify(req.body, null, 2));
 
   res.sendStatus(200);
-  
-  return res.status(200).send(req.query["hub.challenge"]);
 });
 
 app.listen(process.env.PORT || 5000);
