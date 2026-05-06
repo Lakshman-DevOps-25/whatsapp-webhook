@@ -17,10 +17,18 @@ app.get("/webhook", (req, res) => {
 });
 
 app.post("/webhook", (req, res) => {
-  console.log("🔥 FULL WEBHOOK DATA:");
+  console.log("🔥 FULL BODY:");
   console.log(JSON.stringify(req.body, null, 2));
+
+  const body = req.body;
+
+  body.entry?.forEach(entry => {
+    entry.changes?.forEach(change => {
+      console.log("👉 CHANGE FIELD:", change.field);
+      console.log("👉 VALUE:", JSON.stringify(change.value, null, 2));
+    });
+  });
 
   res.sendStatus(200);
 });
-
 app.listen(process.env.PORT || 5000);
