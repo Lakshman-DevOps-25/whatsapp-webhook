@@ -28,24 +28,33 @@ app.get("/webhook", (req, res) => {
 });
 
 app.post("/webhook", (req, res) => {
-  console.log("🔥 FULL BODY:");
-  console.log(JSON.stringify(req.body, null, 2));
-
-  const body = req.body;
-
-  body.entry?.forEach(entry => {
-    entry.changes?.forEach(change => {
-      console.log("👉 CHANGE FIELD:", change.field);
-      console.log("👉 VALUE:", JSON.stringify(change.value, null, 2));
+  try {
+    console.log("🔥 FULL BODY:");
+    console.log(JSON.stringify(req.body, null, 2));
+  
+    const body = req.body;
+  
+    body.entry?.forEach(entry => {
+      entry.changes?.forEach(change => {
+        console.log("👉 CHANGE FIELD:", change.field);
+        console.log("👉 VALUE:", JSON.stringify(change.value, null, 2));
+      });
     });
-  });
+  
+    const savedMessage = await Message.create({
+      from: msg.from,
+      text: msg.text?.body,
+      time: new Date()
+    });
+  
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("❌ ERROR:", err.response?.data || err.message);
 
-  await Message.create({
-    from: msg.from,
-    text: msg.text?.body,
-    time: new Date()
-  });
-
-  res.sendStatus(200);
+    return res.status(500).json({
+      success: false,
+      error: err.response?.data || err.message
+    });
+  }  
 });
 app.listen(process.env.PORT || 5000);
