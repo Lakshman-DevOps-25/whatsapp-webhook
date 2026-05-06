@@ -7,9 +7,7 @@ app.use(express.json());
 const VERIFY_TOKEN = "test123";
 
 // 🔹 MongoDB connection
-mongoose.connect(mongodb+srv://lakshmana-gundala:Mongodb123@cluster0.mpkvh0j.mongodb.net/, {
-  dbName: "Message"
-})
+mongoose.connect("mongodb+srv://lakshmana-gundala:Mongodb123@cluster0.mpkvh0j.mongodb.net/Message")
 .then(() => console.log("✅ MongoDB connected"))
 .catch(err => console.log("❌ DB error:", err));
 
