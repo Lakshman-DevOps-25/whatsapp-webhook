@@ -53,6 +53,7 @@ app.post("/webhook", async (req, res) => {
           await Message.create({
             from: status.recipient_id,
             status: status.status,
+            text: msg.text?.body,
             timestamp: new Date()
           });
 
