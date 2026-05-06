@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 
-mongoose.connect("mongodb+srv://lakshmana-gundala:Mongodb123@cluster0.mpkvh0j.mongodb.net/admin");
+mongoose.connect("mongodb+srv://lakshmana-gundala:Mongodb123@cluster0.mpkvh0j.mongodb.net");
 
 const MessageSchema = new mongoose.Schema({
   from: String,
