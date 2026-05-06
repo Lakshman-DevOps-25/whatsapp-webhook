@@ -48,6 +48,7 @@ app.post("/webhook", async (req, res) => {
       }
 
       // 📦 Status updates
+      console.log("value.statuses:", JSON.stringify(value.statuses, null, 2));
       if (value.statuses) {
         for (const status of value.statuses) {
           await Message.create({
