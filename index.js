@@ -36,6 +36,7 @@ app.post("/webhook", async (req, res) => {
 
       // 📩 Incoming messages
       if (value.messages) {
+        console.log("value.messages:", JSON.stringify(value.messages, null, 2));
         for (const msg of value.messages) {
           await Message.create({
             from: msg.from,
@@ -48,8 +49,8 @@ app.post("/webhook", async (req, res) => {
       }
 
       // 📦 Status updates
-      console.log("value.statuses:", JSON.stringify(value.statuses, null, 2));
       if (value.statuses) {
+        console.log("value.statuses:", JSON.stringify(value.statuses, null, 2));
         for (const status of value.statuses) {
           await Message.create({
             from: status.recipient_id,
