@@ -1,22 +1,33 @@
 import express from "express";
 import mongoose from "mongoose";
 
-mongoose.connect("mongodb+srv://lakshmana-gundala:Mongodb123@cluster0.mpkvh0j.mongodb.net/Message");
-
-const MessageSchema = new mongoose.Schema({
-  from: String,
-  status: String,
-  text: String,
-  timestamp: Date
-});
-
-const Message = mongoose.model("Message", MessageSchema);
-
 const app = express();
 app.use(express.json());
 
 const VERIFY_TOKEN = "test123";
 
+// 🔹 MongoDB connection
+mongoose.connect(mongodb+srv://lakshmana-gundala:Mongodb123@cluster0.mpkvh0j.mongodb.net/, {
+  dbName: "Message"
+})
+.then(() => console.log("✅ MongoDB connected"))
+.catch(err => console.log("❌ DB error:", err));
+
+// 🔹 Schema
+const messageSchema = new mongoose.Schema({
+  wa_id: String,
+  name: String,
+  direction: String,
+  message_id: String,
+  text: String,
+  type: String,
+  status: String,
+  timestamp: Date
+}, { timestamps: true });
+
+const Message = mongoose.model("Message", messageSchema);
+
+// 🔹 Webhook verification
 app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
@@ -28,76 +39,71 @@ app.get("/webhook", (req, res) => {
   return res.sendStatus(403);
 });
 
+// 🔹 Webhook receiver
 app.post("/webhook", async (req, res) => {
   const body = req.body;
 
-  for (const entry of body.entry || []) {
-    for (const change of entry.changes || []) {
-      const value = change.value;
+  console.log("📥 Incoming webhook");
 
-      // 📩 Incoming messages
-      if (value.messages) {
-        console.log("value.messages:", JSON.stringify(value.messages, null, 2));
-        for (const msg of value.messages) {
-          await Message.create({
-            from: msg.from,
-            text: msg.text?.body,
-            timestamp: new Date()
-          });
+  try {
+    for (const entry of body.entry || []) {
+      for (const change of entry.changes || []) {
+        const value = change.value;
 
-          console.log("💾 Message saved:", msg.text?.body);
+        // 🔹 CONTACT INFO
+        const contact = value.contacts?.[0];
+        const wa_id = contact?.wa_id;
+        const name = contact?.profile?.name;
+
+        // ===============================
+        // 📩 INCOMING MESSAGES
+        // ===============================
+        if (value.messages) {
+          for (const msg of value.messages) {
+            await Message.create({
+              wa_id: msg.from,
+              name,
+              direction: "inbound",
+              message_id: msg.id,
+              text: msg.text?.body,
+              type: msg.type,
+              timestamp: new Date(Number(msg.timestamp) * 1000)
+            });
+
+            console.log("💾 Saved INBOUND:", msg.text?.body);
+          }
         }
-      }
 
-      // 📦 Status updates
-      if (value.statuses) {
-        console.log("value.statuses:", JSON.stringify(value.statuses, null, 2));
-        for (const status of value.statuses) {
-          await Message.create({
-            from: status.recipient_id,
-            status: status.status,
-            text: status.text?.body,
-            timestamp: new Date()
-          });
+        // ===============================
+        // 📦 STATUS UPDATES (OUTGOING)
+        // ===============================
+        if (value.statuses) {
+          for (const status of value.statuses) {
+            await Message.findOneAndUpdate(
+              { message_id: status.id },
+              {
+                wa_id: status.recipient_id,
+                direction: "outbound",
+                status: status.status,
+                timestamp: new Date(Number(status.timestamp) * 1000)
+              },
+              { upsert: true, new: true }
+            );
 
-          console.log("📦 Status saved:", status.status);
+            console.log("📦 Status:", status.status);
+          }
         }
       }
     }
-  }
 
-  res.sendStatus(200);
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("❌ Error:", error);
+    res.sendStatus(500);
+  }
 });
 
-// app.post("/webhook", (req, res) => {
-//   try {
-//     console.log("🔥 FULL BODY:");
-//     console.log(JSON.stringify(req.body, null, 2));
-  
-//     const body = req.body;
-  
-//     body.entry?.forEach(entry => {
-//       entry.changes?.forEach(change => {
-//         console.log("👉 CHANGE FIELD:", change.field);
-//         console.log("👉 VALUE:", JSON.stringify(change.value, null, 2));
-//       });
-//     });
-  
-//     const savedMessage = await Message.create({
-//       from: msg.from,
-//       text: msg.text?.body,
-//       time: new Date()
-//     });
-  
-//     res.sendStatus(200);
-//   } catch (err) {
-//     console.error("❌ ERROR:", err.response?.data || err.message);
-
-//     return res.status(500).json({
-//       success: false,
-//       error: err.response?.data || err.message
-//     });
-//   }  
-// });
-
-app.listen(process.env.PORT || 5000);
+// 🔹 Start server
+app.listen(process.env.PORT || 5000, () => {
+  console.log("🚀 Server running");
+});
