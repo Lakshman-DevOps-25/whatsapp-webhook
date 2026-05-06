@@ -5,8 +5,9 @@ mongoose.connect("mongodb+srv://lakshmana-gundala:Mongodb123@cluster0.mpkvh0j.mo
 
 const MessageSchema = new mongoose.Schema({
   from: String,
+  status: String,
   text: String,
-  time: Date
+  timestamp: Date
 });
 
 const Message = mongoose.model("Message", MessageSchema);
