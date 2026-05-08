@@ -57,6 +57,7 @@ app.post("/webhook", async (req, res) => {
         // 📩 INCOMING MESSAGES
         // ===============================
         if (value.messages) {
+          console.log("value.messages: ", value.messages);
           for (const msg of value.messages) {
             await Message.create({
               wa_id: msg.from,
