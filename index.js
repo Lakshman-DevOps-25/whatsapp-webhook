@@ -2,7 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import axios from "axios";
-import Minio from "minio";
+// import Minio from "minio";
+import * as Minio from "minio";
 import mime from "mime-types";
 
 dotenv.config();
