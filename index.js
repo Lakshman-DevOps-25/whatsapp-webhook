@@ -52,6 +52,16 @@ app.post("/webhook", async (req, res) => {
 
         console.log("Values:", value);
 
+        if (value.messages) {
+          console.log("📩 CUSTOMER MESSAGE");
+          console.log(JSON.stringify(value.messages, null, 2));
+        }
+        
+        if (value.statuses) {
+          console.log("📦 MESSAGE STATUS");
+          console.log(JSON.stringify(value.statuses, null, 2));
+        }
+
         // 🔹 CONTACT INFO
         const contact = value.contacts?.[0];
         const wa_id = contact?.wa_id;
