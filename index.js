@@ -63,6 +63,7 @@ app.post("/webhook", async (req, res) => {
         if (value.messages) {
           console.log("value.messages: ", value.messages);
           for (const msg of value.messages) {
+            console.log("msg:", msg);
             await Message.create({
               wa_id: msg.from,
               name,
@@ -83,6 +84,7 @@ app.post("/webhook", async (req, res) => {
         if (value.statuses) {
           console.log("value.statuses: ", value.statuses);
           for (const status of value.statuses) {
+            console.log("status:", status);
             await Message.findOneAndUpdate(
               { message_id: status.id },
               {
