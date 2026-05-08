@@ -48,6 +48,8 @@ app.post("/webhook", async (req, res) => {
       for (const change of entry.changes || []) {
         const value = change.value;
 
+        console.log("Values:", value);
+
         // 🔹 CONTACT INFO
         const contact = value.contacts?.[0];
         const wa_id = contact?.wa_id;
