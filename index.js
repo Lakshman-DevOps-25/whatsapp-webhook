@@ -43,6 +43,8 @@ app.post("/webhook", async (req, res) => {
 
   console.log("📥 Incoming webhook");
 
+  console.log("req.body:", req.body);
+
   try {
     for (const entry of body.entry || []) {
       for (const change of entry.changes || []) {
