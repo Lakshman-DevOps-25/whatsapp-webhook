@@ -7,11 +7,8 @@ import * as Minio from "minio";
 import mime from "mime-types";
 
 dotenv.config();
-
 const app = express();
-
 app.use(express.json());
-
 
 // ============================================
 // MONGODB
@@ -70,16 +67,14 @@ const messageSchema = new mongoose.Schema({
   timestamp: Date
 }, { timestamps: true });
 
-const Message = mongoose.model(
-  "Message",
-  messageSchema
-);
+const Message = mongoose.model("Message", messageSchema);
 
 // ============================================
 // DOWNLOAD MEDIA FROM WHATSAPP
 // ============================================
 
 const downloadMedia = async (mediaId) => {
+  console.log("Download Media function")
   try {
     // ========================================
     // GET MEDIA URL
@@ -111,10 +106,10 @@ const downloadMedia = async (mediaId) => {
     );
 
     const contentType = fileResponse.headers["content-type"];
-
     const extension = mime.extension(contentType);
-
     const fileName = `${mediaId}.${extension}`;
+    
+    console.log("FileName:", fileName);
 
     // ========================================
     // UPLOAD TO MINIO
@@ -179,6 +174,8 @@ app.post("/webhook", async (req, res) => {
     for (const entry of body.entry || []) {
       for (const change of entry.changes || []) {
         const value = change.value;
+        
+        console.log("Value:", value);
         
         // ====================================
         // CUSTOMER → BUSINESS
