@@ -70,6 +70,28 @@ app.post("/webhook", async (req, res) => {
         // ===============================
         // 📩 INCOMING MESSAGES
         // ===============================
+
+        if (value.messages) {
+          const contact = value.contacts?.[0];
+          for (const msg of value.messages) {
+            const savedMessage = await Message.create({
+              wa_id: msg.from || "",
+              name: contact?.profile?.name || "",
+              direction: "inbound",
+              message_id: msg.id || "",
+              text: msg.text?.body || "",
+              type: msg.type || "",
+              status: "received",
+              timestamp: msg.timestamp
+                ? new Date(Number(msg.timestamp) * 1000)
+                : new Date()
+            });
+
+            console.log("✅ MESSAGE SAVED");
+            console.log(savedMessage);
+          }
+        }
+        
         // if (value.messages) {
         //   console.log("value.messages: ", value.messages);
         //   for (const msg of value.messages) {
