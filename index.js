@@ -70,29 +70,29 @@ app.post("/webhook", async (req, res) => {
         // ===============================
         // 📩 INCOMING MESSAGES
         // ===============================
-        if (value.messages) {
-          console.log("value.messages: ", value.messages);
-          for (const msg of value.messages) {
-            console.log("msg:", msg);
-            const savedMessage = await Message.create({
-              wa_id: msg.from || "",
-              name: contact?.profile?.name || "",
-              direction: "inbound",
-              message_id: msg.id || "",
-              text: msg.text?.body || "",
-              type: msg.type || "",
-              status: "received",
-              timestamp: msg.timestamp
-                ? new Date(Number(msg.timestamp) * 1000)
-                : new Date()
-            });
+        // if (value.messages) {
+        //   console.log("value.messages: ", value.messages);
+        //   for (const msg of value.messages) {
+        //     console.log("msg:", msg);
+        //     const savedMessage = await Message.create({
+        //       wa_id: msg.from || "",
+        //       name: contact?.profile?.name || "",
+        //       direction: "inbound",
+        //       message_id: msg.id || "",
+        //       text: msg.text?.body || "",
+        //       type: msg.type || "",
+        //       status: "received",
+        //       timestamp: msg.timestamp
+        //         ? new Date(Number(msg.timestamp) * 1000)
+        //         : new Date()
+        //     });
 
-            // console.log("💾 Saved INBOUND:", msg.text?.body);
+        //     // console.log("💾 Saved INBOUND:", msg.text?.body);
 
-            console.log("✅ INBOUND SAVED");
-            console.log(savedMessage);
-          }
-        }
+        //     console.log("✅ INBOUND SAVED");
+        //     console.log(savedMessage);
+        //   }
+        // }
 
         // ===============================
         // 📦 STATUS UPDATES (OUTGOING)
