@@ -76,12 +76,14 @@ app.post("/webhook", async (req, res) => {
         // 📦 STATUS UPDATES (OUTGOING)
         // ===============================
         if (value.statuses) {
+          console.log("value.statuses: ", value.statuses);
           for (const status of value.statuses) {
             await Message.findOneAndUpdate(
               { message_id: status.id },
               {
                 wa_id: status.recipient_id,
                 direction: "outbound",
+                text: status.text?.body,
                 status: status.status,
                 timestamp: new Date(Number(status.timestamp) * 1000)
               },
