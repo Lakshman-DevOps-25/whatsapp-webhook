@@ -43,7 +43,7 @@ app.post("/webhook", async (req, res) => {
 
   console.log("📥 Incoming webhook");
 
-  console.log("req.body:", req.body);
+  console.log(JSON.stringify(body, null, 2));
 
   try {
     for (const entry of body.entry || []) {
@@ -64,17 +64,23 @@ app.post("/webhook", async (req, res) => {
           console.log("value.messages: ", value.messages);
           for (const msg of value.messages) {
             console.log("msg:", msg);
-            await Message.create({
-              wa_id: msg.from,
-              name,
+            const savedMessage = await Message.create({
+              wa_id: msg.from || "",
+              name: contact?.profile?.name || "",
               direction: "inbound",
-              message_id: msg.id,
-              text: msg.text?.body,
-              type: msg.type,
-              timestamp: new Date(Number(msg.timestamp) * 1000)
+              message_id: msg.id || "",
+              text: msg.text?.body || "",
+              type: msg.type || "",
+              status: "received",
+              timestamp: msg.timestamp
+                ? new Date(Number(msg.timestamp) * 1000)
+                : new Date()
             });
 
-            console.log("💾 Saved INBOUND:", msg.text?.body);
+            // console.log("💾 Saved INBOUND:", msg.text?.body);
+
+            console.log("✅ INBOUND SAVED");
+            console.log(savedMessage);
           }
         }
 
