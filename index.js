@@ -97,6 +97,7 @@ const downloadMedia = async (mediaId) => {
       }
     );
     const mediaUrl = mediaResponse.data.url;
+    console.log("Media URL - ", mediaUrl);
 
     // ========================================
     // DOWNLOAD FILE
@@ -195,7 +196,8 @@ app.post("/webhook", async (req, res) => {
           
           for (const msg of value.messages) {
             let mediaFiles = [];
-            console.log("Msg: ", msg);
+            // console.log("Msg: ", msg);
+            console.log("Msg - ", JSON.stringify(msg, null, 2));
             
             // =================================
             // IMAGE
