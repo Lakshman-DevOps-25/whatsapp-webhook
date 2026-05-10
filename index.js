@@ -114,12 +114,6 @@ const downloadMedia = async (mediaId) => {
       }
     );
 
-    const contentType = fileResponse.headers["content-type"];
-    const extension = mime.extension(contentType);
-    const fileName = `${mediaId}.${extension}`;
-    
-    console.log("FileName:", fileName);
-
     // ========================================
     // UPLOAD TO MINIO
     // ========================================
