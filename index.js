@@ -190,18 +190,19 @@ app.post("/webhook", async (req, res) => {
         // ====================================
 
         if (value.messages) {
-          const contact =
-            value.contacts?.[0];
+          const contact = value.contacts?.[0];
+          console.log("Contact: ",contact);
+          
           for (const msg of value.messages) {
             let mediaFiles = [];
+            console.log("Msg: ", msg);
             
             // =================================
             // IMAGE
             // =================================
             
             if (msg.image?.id) {
-              const uploaded =
-                await downloadMedia(
+              const uploaded = await downloadMedia(
                   msg.image.id
                 );
               if (uploaded)
@@ -213,8 +214,7 @@ app.post("/webhook", async (req, res) => {
             // =================================
 
             if (msg.document?.id) {
-              const uploaded =
-                await downloadMedia(
+              const uploaded = await downloadMedia(
                   msg.document.id
                 );
               if (uploaded)
