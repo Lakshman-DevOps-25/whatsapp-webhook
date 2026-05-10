@@ -124,14 +124,34 @@ const downloadMedia = async (mediaId) => {
     // UPLOAD TO MINIO
     // ========================================
 
+    const contentType = fileResponse.headers["content-type"];
+    const extension = mime.extension(contentType);
+    const fileName = `${mediaId}.${extension}`;
+    const fileBuffer = Buffer.from(fileResponse.data);
+    console.log("Bucket:", bucket);
+    console.log("File:", fileName);
+    console.log("Buffer Length:", fileBuffer.length);
+  
     await minioClient.putObject(
       bucket,
       fileName,
-      fileResponse.data,
+      fileBuffer,
+      fileBuffer.length,
       {
         "Content-Type": contentType
       }
     );
+  
+    console.log("✅ FILE UPLOADED TO MINIO");
+    
+    // await minioClient.putObject(
+    //   bucket,
+    //   fileName,
+    //   fileResponse.data,
+    //   {
+    //     "Content-Type": contentType
+    //   }
+    // );
 
     const publicUrl = `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${bucket}/${fileName}`;
     console.log("PublicURL:", publicUrl);
