@@ -190,8 +190,8 @@ app.post("/webhook", async (req, res) => {
         // ====================================
 
         if (value.messages) {
-          const contact = value.contacts?.[0];
-          console.log("Contact: ",contact);
+          // const contact = value.contacts?.[0];
+          // console.log("Contact: ",contact);
           
           for (const msg of value.messages) {
             let mediaFiles = [];
@@ -254,7 +254,8 @@ app.post("/webhook", async (req, res) => {
             const savedMessage =
               await Message.create({
                 wa_id: msg.from,
-                name: contact?.profile?.name || "",
+                // name: contact?.profile?.name || "",
+                name: "Lakshmana Rao G",
                 direction: "inbound",
                 message_id: msg.id,
                 type: msg.type,
