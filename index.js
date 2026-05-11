@@ -55,6 +55,8 @@ minioClient.bucketExists(bucket, (err, exists) => {
   if (!exists) {
     minioClient.makeBucket(bucket);
     console.log("✅ MinIO Bucket Created");
+  } else {
+    console.log("MenIO bucket already exists");
   }
 });
 
@@ -141,9 +143,10 @@ const downloadMedia = async (mediaId) => {
       }
     );
 
-    if(uploadFileToMinio)
+    if(uploadFileToMinio) {
       console.log("✅ FILE UPLOADED TO MINIO");
-    else
+      console.log("uploadFileToMinio - ", uploadFileToMinio);
+    } else
         console.log("✅ FILE NOT UPLOADED TO MINIO");
     
     // await minioClient.putObject(
