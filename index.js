@@ -38,7 +38,7 @@ const minioClient = new Minio.Client({
   secretKey: process.env.MINIO_SECRET_KEY
 });
 
-if(minioClient)]
+if(minioClient)
   consolg.log("MinioCLient connected succufully");
 else
   consolg.log("MinioCLient not connected succufully");
