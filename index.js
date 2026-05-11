@@ -148,6 +148,27 @@ const downloadMedia = async (mediaId) => {
       console.log("uploadFileToMinio - ", uploadFileToMinio);
     } else
         console.log("✅ FILE NOT UPLOADED TO MINIO");
+
+    const stat = await minioClient.statObject(
+      bucket,
+      fileName
+    );
+  
+    console.log("STAT:", stat);
+
+    const stream = minioClient.listObjects(
+      bucket,
+      "",
+      true
+    );
+  
+    stream.on("data", obj => {
+      console.log("MINIO OBJECT:", obj);
+    });
+  
+    stream.on("end", () => {
+      console.log("OBJECT LIST COMPLETED");
+    });
     
     // await minioClient.putObject(
     //   bucket,
