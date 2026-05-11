@@ -38,6 +38,11 @@ const minioClient = new Minio.Client({
   secretKey: process.env.MINIO_SECRET_KEY
 });
 
+if(minioClient)]
+  consolg.log("MinioCLient connected succufully");
+else
+  consolg.log("MinioCLient not connected succufully");
+
 
 // ============================================
 // CREATE BUCKET
@@ -126,7 +131,7 @@ const downloadMedia = async (mediaId) => {
     console.log("File:", fileName);
     console.log("Buffer Length:", fileBuffer.length);
   
-    await minioClient.putObject(
+    const uploadFileToMinio = await minioClient.putObject(
       bucket,
       fileName,
       fileBuffer,
@@ -135,8 +140,11 @@ const downloadMedia = async (mediaId) => {
         "Content-Type": contentType
       }
     );
-  
-    console.log("✅ FILE UPLOADED TO MINIO");
+
+    if(uploadFileToMinio)
+      console.log("✅ FILE UPLOADED TO MINIO");
+    else
+        console.log("✅ FILE NOT UPLOADED TO MINIO");
     
     // await minioClient.putObject(
     //   bucket,
