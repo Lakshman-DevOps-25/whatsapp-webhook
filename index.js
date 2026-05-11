@@ -39,9 +39,9 @@ const minioClient = new Minio.Client({
 });
 
 if(minioClient)
-  consolg.log("MinioCLient connected succufully");
+  console.log("MinioCLient connected succufully");
 else
-  consolg.log("MinioCLient not connected succufully");
+  console.log("MinioCLient not connected succufully");
 
 
 // ============================================
