@@ -147,9 +147,14 @@ const downloadMedia = async (mediaId) => {
     //   }
     // );
 
-    const publicUrl = `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${bucket}/${fileName}`;
+    const publicUrl = await minioClient.presignedGetObject(
+      bucket,
+      fileName,
+      24 * 60 * 60
+    );
+
     console.log("PublicURL:", publicUrl);
-    
+
     return {
       media_id: mediaId,
       mime_type: contentType,
@@ -157,6 +162,17 @@ const downloadMedia = async (mediaId) => {
       minio_path: `${bucket}/${fileName}`,
       public_url: publicUrl
     };
+
+    // const publicUrl = `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${bucket}/${fileName}`;
+    // console.log("PublicURL:", publicUrl);
+    
+    // return {
+    //   media_id: mediaId,
+    //   mime_type: contentType,
+    //   file_name: fileName,
+    //   minio_path: `${bucket}/${fileName}`,
+    //   public_url: publicUrl
+    // };
 
   } catch (error) {
     console.log("❌ MEDIA DOWNLOAD ERROR");
